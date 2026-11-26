@@ -1,0 +1,567 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cinema Notification API",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:4012/api/v1",
+      "description": "Mock local"
+    }
+  ],
+  "paths": {
+    "/internal/notifications": {
+      "post": {
+        "operationId": "post_internal_notifications",
+        "summary": "Đưa email vào hàng gửi theo mẫu",
+        "tags": [
+          "internal"
+        ],
+        "x-permissions": "Service · Core → Notification",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "booking-demo-attempt-1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Nhà cung cấp đã tiếp nhận thư. Kiểm tra inbox để xác nhận đã nhận.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "statusCode": 200,
+                  "message": "Nhà cung cấp đã nhận email",
+                  "data": {
+                    "id": "n1",
+                    "status": "sent",
+                    "providerMessageId": "demo-provider-message-id"
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Một yêu cầu cùng khóa đang xử lý. Gửi lại cùng khóa và payload để kiểm tra.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "statusCode": 202,
+                  "message": "OK",
+                  "data": {
+                    "id": "n1",
+                    "status": "processing"
+                  }
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON không hợp lệ",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 400,
+                  "message": "JSON không hợp lệ",
+                  "error": {
+                    "code": "INVALID_JSON",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Cần thông tin xác thực hợp lệ",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 401,
+                  "message": "Cần thông tin xác thực hợp lệ",
+                  "error": {
+                    "code": "UNAUTHENTICATED",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Không có quyền thực hiện thao tác",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 403,
+                  "message": "Không có quyền thực hiện thao tác",
+                  "error": {
+                    "code": "FORBIDDEN",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Không tìm thấy tài nguyên",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 404,
+                  "message": "Không tìm thấy tài nguyên",
+                  "error": {
+                    "code": "NOT_FOUND",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Xung đột trạng thái",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 409,
+                  "message": "Xung đột trạng thái",
+                  "error": {
+                    "code": "CONFLICT",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Dữ liệu không hợp lệ",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 422,
+                  "message": "Dữ liệu không hợp lệ",
+                  "error": {
+                    "code": "VALIDATION_ERROR",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Quá nhiều yêu cầu",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 429,
+                  "message": "Quá nhiều yêu cầu",
+                  "error": {
+                    "code": "RATE_LIMITED",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Lỗi hệ thống",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 500,
+                  "message": "Lỗi hệ thống",
+                  "error": {
+                    "code": "INTERNAL_ERROR",
+                    "details": []
+                  },
+                  "requestId": "req_demo"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "array",
+                          "items": {}
+                        }
+                      }
+                    },
+                    "requestId": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Không gửi được tới nhà cung cấp. Thử lại với cùng khóa và payload.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "statusCode": 503,
+                  "message": "Gửi email thất bại",
+                  "error": {
+                    "code": "MAIL_DELIVERY_FAILED",
+                    "details": []
+                  },
+                  "requestId": "demo-request-id"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "serviceKey": [],
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "template": "ticket_issued",
+                "recipient": "linh@example.test",
+                "data": {
+                  "bookingId": "b1",
+                  "bookingCode": "DEMO-GUEST-CODE",
+                  "tickets": [
+                    {
+                      "seatLabel": "A1",
+                      "qrToken": "mock_ticket_qr_token"
+                    }
+                  ]
+                }
+              },
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "template": {
+                    "type": "string",
+                    "enum": [
+                      "verify_email",
+                      "reset_password",
+                      "ticket_issued"
+                    ]
+                  },
+                  "recipient": {
+                    "type": "string"
+                  },
+                  "data": {
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "template",
+                  "recipient",
+                  "data"
+                ]
+              }
+            }
+          }
+        },
+        "description": "Trong demo Free, chỉ gửi đến hộp thư được cấu hình. Yêu cầu API key riêng và JWT Ed25519 với aud cinema-notification, scope notifications:send, thời hạn tối đa 60 giây. Với verify_email và reset_password, gửi data.actionUrl cùng origin giao diện. Với ticket_issued, gửi bookingId, bookingCode và tối đa 12 vé."
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "refreshCookie": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "refresh_token"
+      },
+      "serviceKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      },
+      "holdToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Hold-Token"
+      },
+      "bookingCode": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Booking-Code"
+      },
+      "webhookSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Webhook-Signature"
+      }
+    }
+  }
+}

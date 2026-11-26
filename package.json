@@ -1,0 +1,32 @@
+{
+  "name": "cinema-ticket-booking-starter",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev:api": "node --env-file=.env --watch services/api/src/server.js",
+    "dev:payment": "node --env-file=.env --watch services/payment/src/server.js",
+    "dev:notification": "node --env-file=.env --watch services/notification/src/server.js",
+    "mock": "node scripts/mock.mjs",
+    "start": "node services/api/src/server.js",
+    "start:payment": "node services/payment/src/server.js",
+    "start:notification": "node services/notification/src/server.js",
+    "test": "node --test",
+    "demo:email": "node --env-file-if-exists=.env scripts/demo-email.mjs"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "helmet": "^8.0.0",
+    "jose": "^6.2.18",
+    "knex": "^3.1.0",
+    "nodemailer": "^8.0.11",
+    "pg": "^8.13.0",
+    "pino-http": "^10.0.0",
+    "qrcode": "^1.5.4",
+    "swagger-ui-express": "^5.0.1",
+    "zod": "^4.0.0"
+  }
+}

@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: cinema-core
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: WEB_ORIGIN
+        sync: false
+  - type: web
+    name: cinema-payment
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run start:payment
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+  - type: web
+    name: cinema-notification
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm run start:notification
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: MAIL_TRANSPORT
+        value: resend
+      - key: MAIL_FROM
+        value: Cinema <onboarding@resend.dev>
+      - key: MAIL_DEMO_RECIPIENT
+        sync: false
+      - key: MAIL_ACTION_ORIGIN
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: CORE_TO_NOTIFICATION_API_KEY
+        sync: false
+      - key: CORE_SERVICE_PUBLIC_KEY
+        sync: false

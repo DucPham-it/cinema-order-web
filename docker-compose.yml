@@ -1,0 +1,28 @@
+name: cinema-local
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: cinema_local
+      POSTGRES_USER: cinema_local
+      POSTGRES_PASSWORD: cinema_local
+    ports:
+      - "127.0.0.1:15432:5432"
+    volumes:
+      - cinema_local_data:/var/lib/postgresql/data
+      - ./database/001_init_schema.sql:/docker-entrypoint-initdb.d/001_init_schema.sql:ro
+      - ./database/002_notification_delivery.sql:/docker-entrypoint-initdb.d/002_notification_delivery.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/003_seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U cinema_local -d cinema_local"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  mailpit:
+    image: axllent/mailpit:v1
+    profiles: [mail]
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+volumes:
+  cinema_local_data:
